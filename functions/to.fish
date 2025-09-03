@@ -20,7 +20,7 @@ end
 
 # https://github.com/fish-shell/fish-shell/issues/6173#issuecomment-1067114363
 function is_empty_dir
-    test -d "$argv"
+    test -d $argv
     or return 1 # not a directory, so not an empty directory
     # count counts how many arguments it received
     # if this glob doesn't match, it won't get arguments
@@ -31,16 +31,16 @@ function is_empty_dir
 end
 
 function __to_dir
-    if test -n "$TO_DIR"
+    if test -n $TO_DIR
         echo $TO_DIR
         return
     end
 
     set -l dir
 
-    if test -d "$HOME/.tofish" && not is_empty_dir $HOME/.tofish
+    if test -d $HOME/.tofish && not is_empty_dir $HOME/.tofish
         set dir $HOME/.tofish
-    else if test -n "$XDG_DATA_HOME"
+    else if test -n $XDG_DATA_HOME
         set dir $XDG_DATA_HOME/to-fish
     else
         set dir $HOME/.local/share/to-fish
@@ -59,7 +59,7 @@ function __to_resolve
 end
 
 function __to_print
-    __to_resolve $argv | string replace -r "^$HOME" "~" | string replace -r '^~$' $HOME
+    __to_resolve $argv | string replace -r "^$HOME" '~' | string replace -r '^~$' $HOME
 end
 
 function __to_ls
@@ -75,13 +75,13 @@ end
 
 function __to_add -a bm dest
     # if there are no arguments
-    if test -z "$bm"
+    if test -z $bm
         # use the current directory
         set dest (pwd)
         set bm (basename $dest)
     else
         # if there are two arguments
-        if test -n "$dest"
+        if test -n $dest
             # use them as bookmark name and destination
             set dest (realpath $dest)
 
@@ -89,7 +89,7 @@ function __to_add -a bm dest
         else
 
             # if the argument is a directory
-            if string match -q '*/*' $bm && test -d "$bm"
+            if string match -q '*/*' $bm && test -d $bm
                 # use it as the destination
                 set dest (realpath $bm)
                 set bm (basename $dest)
@@ -106,7 +106,7 @@ function __to_add -a bm dest
         return 1
     end
 
-    if not test -d "$dest"
+    if not test -d $dest
         echo "ERROR: Destination does not exist: $dest" >&2
         return 1
     end
@@ -132,11 +132,11 @@ function __to_complete_directories
     set -l cl (commandline -ct | string split -m 1 /)
     set -l bm $cl[1]
     set -l bmdir (__to_resolve $bm)
-    if test -z "$bmdir"
+    if test -z $bmdir
         __fish_complete_directories
     else
         set -e cl[1]
-        if test -z "$cl"
+        if test -z $cl
             __fish_complete_directories $bmdir/ | string replace -r 'Directory$' $bm
         else
             __fish_complete_directories $bmdir/$cl | string replace -r 'Directory$' $bm
@@ -170,7 +170,7 @@ function to -d 'Bookmarking tool'
     set -l dir (__to_dir)
 
     # Create tofish directory
-    if not test -d "$dir"
+    if not test -d $dir
         if command mkdir $dir
             echo "Created bookmark directory: $dir"
         else
@@ -267,20 +267,20 @@ function to -d 'Bookmarking tool'
             # Default
         case '*'
             set -l name $argv[1]
-            if test -z "$name"
+            if test -z $name
                 __to_usage
                 return 1
             end
 
             set -l dest (__to_resolve $name)
-            if test -z "$dest"
-                if test -d "$name"
+            if test -z $dest
+                if test -d $name
                     echo "cd \"$name\"" | source -
                 else
                     echo "to: No such bookmark “$name”" >&2
                     return 1
                 end
-            else if test -d "$dest"
+            else if test -d $dest
                 echo "cd \"$dest\"" | source -
             else
                 echo "to: Destination for bookmark “$name” does not exist: $dest" >&2
