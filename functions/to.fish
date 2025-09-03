@@ -64,6 +64,7 @@ end
 
 function __to_ls
     for l in (__to_dir)/*
+        test -L $l; or continue
         basename $l
     end
 end
@@ -162,7 +163,15 @@ function __to_update_bookmark_completions
 
     # Bookmarks
     for bm in (__to_ls | sort -r)
-        complete -c to -k -n '__fish_use_subcommand; or __fish_seen_subcommand_from rm mv resolve' -r -a (echo $bm | string escape) -d (__to_print $bm)
+        if test -z $bm
+            continue
+        end
+        set -l desc (__to_print $bm)
+        if test -z $desc
+            set desc '(broken)'
+        end
+
+        complete -c to -k -n '__fish_use_subcommand; or __fish_seen_subcommand_from rm mv resolve' -r -a (echo $bm | string escape) -d $desc
     end
 end
 
