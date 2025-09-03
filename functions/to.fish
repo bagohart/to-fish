@@ -275,13 +275,13 @@ function to -d 'Bookmarking tool'
             set -l dest (__to_resolve $name)
             if test -z $dest
                 if test -d $name
-                    echo "cd \"$name\"" | source -
+                    echo cd (string escape $name) | source -
                 else
                     echo "to: No such bookmark “$name”" >&2
                     return 1
                 end
             else if test -d $dest
-                echo "cd \"$dest\"" | source -
+                echo cd (string escape $dest) | source -
             else
                 echo "to: Destination for bookmark “$name” does not exist: $dest" >&2
                 return 1
