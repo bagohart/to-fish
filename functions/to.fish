@@ -159,7 +159,7 @@ function __to_update_bookmark_completions
     complete -c to -k -n __fish_use_subcommand -x -a add -d 'Create bookmark'
 
     # Directories
-    complete -c to -k -n __fish_use_subcommand -r -a '(__to_complete_directories)'
+    # complete -c to -k -n __fish_use_subcommand -r -a '(__to_complete_directories)'
 
     # Bookmarks
     for bm in (__to_ls | sort -r)
